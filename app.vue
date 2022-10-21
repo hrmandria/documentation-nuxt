@@ -1,5 +1,33 @@
-<script setup>
-const runtimeConfig = useRuntimeConfig()
+<script>
+export default {
+    data() {
+      return {
+        mountains: [],
+        post: {}
+      }
+    },
+    methods: {
+      async fetch() {
+        this.mountains = await fetch(
+          'https://api.nuxtjs.dev/posts'
+        ).then(res => res.json())
+        alert("okay")
+        alert(this.mountains)
+      },
+      async changeContent(e) {
+        const id = parseInt(e.target.children[1].innerHTML);
+        this.post = await fetch(`https://api.nuxtjs.dev/posts/${id}`).then(res => res.json());
+        console.log(this.post)
+      }
+    },
+    async mounted() {
+      this.mountains = await fetch(
+        'https://api.nuxtjs.dev/posts'
+      ).then(res => res.json())
+      this.post = await fetch('https://api.nuxtjs.dev/posts/1').then(res => res.json());
+      console.log(this.post);
+    }
+  }
 </script>
 
 <template>
@@ -23,23 +51,14 @@ const runtimeConfig = useRuntimeConfig()
           <i>hamburger icon</i>
           <div>MENU</div>
         </div>
-        <div class="doc">
-          <p>Documentation</p>
+        <div v-for="mountain of mountains" :key="mountain.id" class="doc" @click="changeContent">
+          <p>{{mountain.title}}</p>
+          <p class="hidden">{{mountain.id}}</p>
         </div>
       </div>
       <div class="doc-content">
-        <h1>Documentation Title</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <h2>Some subtitle</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <h2>Some subtitle</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <h2>Some subtitle</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <h2>Some subtitle</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <h2>Some subtitle</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <h1>{{post.title}}</h1>
+        <p>{{post.description}}</p>
       </div>
     </div>
   </div>
@@ -92,6 +111,7 @@ a {
   justify-content: center;
   border-radius:10px;
   color:white;
+  display:flex;
 }
 .doc-content {
   padding-left: 5%;
@@ -99,5 +119,8 @@ a {
   background-color:white;
   overflow:auto;
   height: 590px;
+}
+.hidden {
+  visibility: hidden;
 }
 </style>
