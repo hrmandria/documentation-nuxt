@@ -3,7 +3,10 @@ export default {
     data() {
       return {
         mountains: [],
-        post: {}
+        post: {}, 
+        documentation : true,
+        results: false,
+        docs: []
       }
     },
     methods: {
@@ -11,13 +14,20 @@ export default {
         this.mountains = await fetch(
           'https://api.nuxtjs.dev/posts'
         ).then(res => res.json())
-        alert("okay")
-        alert(this.mountains)
       },
       async changeContent(e) {
-        const id = parseInt(e.target.children[1].innerHTML);
+        this.documentation = true;
+        this.results = false;
+        e.stopPropagation();
+        const id = parseInt(e.currentTarget.children[1].innerHTML);
         this.post = await fetch(`https://api.nuxtjs.dev/posts/${id}`).then(res => res.json());
-        console.log(this.post)
+        console.log(this.post);
+      },
+      async search() {
+        this.results = true;
+        this.documentation = false;
+        const keywords = this.$refs.keywords.value;
+        //dia avy eo mandefa requete fanaovana recherche amin'izay avec keywords en parametre 
       }
     },
     async mounted() {
@@ -26,6 +36,8 @@ export default {
       ).then(res => res.json())
       this.post = await fetch('https://api.nuxtjs.dev/posts/1').then(res => res.json());
       console.log(this.post);
+      this.documentation = true;
+      this.results = false
     }
   }
 </script>
@@ -37,8 +49,8 @@ export default {
         <p>Teratany Docs</p>
         <div class="search">
           <label for="doc-search"></label>
-          <input type="search" id="doc-search" name="search">
-          <button>Search</button>
+          <input type="search" id="doc-search" name="search" ref="keywords">
+          <button @click="search">Search</button>
         </div>
         <div>
           <a href="/home">Home</a>
@@ -52,13 +64,22 @@ export default {
           <div>MENU</div>
         </div>
         <div v-for="mountain of mountains" :key="mountain.id" class="doc" @click="changeContent">
-          <p>{{mountain.title}}</p>
+          <p class="title">{{mountain.title}}</p>
           <p class="hidden">{{mountain.id}}</p>
         </div>
       </div>
-      <div class="doc-content">
+        <NuxtLink to="/create" class="nuxtlink">
+          Create Documentation
+        </NuxtLink>
+      <div v-if="documentation" class="doc-content">
         <h1>{{post.title}}</h1>
         <p>{{post.description}}</p>
+      </div>
+      <div v-else>
+        <p>Results</p>
+        <div class="result">
+          <p>Title Documentation</p>
+        </div>
       </div>
     </div>
   </div>
@@ -74,6 +95,10 @@ export default {
   background-color: black;
   color: white;
   height: 50px;
+}
+
+.nuxtlink {
+  color: blue;
 }
 
 .navbar-content {
@@ -105,13 +130,18 @@ a {
 }
 .doc {
   background-color:grey;
-  width:100%;
+  width:200px;
+  height: 50px;
   margin-top: 5%;
-  display: flex;
   justify-content: center;
   border-radius:10px;
   color:white;
-  display:flex;
+}
+.title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top:7%;
 }
 .doc-content {
   padding-left: 5%;
@@ -121,6 +151,28 @@ a {
   height: 590px;
 }
 .hidden {
+  width:200px;
+  justify-content: center;
+  border-radius:10px;
+  margin-top: -23%;
+  color:white;
+  height: 100%;            
+  opacity: 0.8; 
+  background-color: red;
   visibility: hidden;
+  z-index: 9
+}
+.result {
+  background-color: grey;
+  height: 60px;
+  display: row;
+  justify-content:center;
+  padding-left: 10%;
+  padding-right: 20%;
+}
+
+.result > p {
+  padding-top: 2%;
+  padding-left: 20%;
 }
 </style>
